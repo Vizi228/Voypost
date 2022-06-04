@@ -44,7 +44,7 @@ const Root: React.FC = () => {
     <GuestLayout>
       <Switch>
         <Route exact path="/login" component={SignInScreen} />
-        <Route path="*" component={NotFoundScreen} />
+        <Route path="*" component={() => <Redirect to="/login" />} />
       </Switch>
     </GuestLayout>
   );

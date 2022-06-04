@@ -7,7 +7,6 @@ export const UIContext = createContext<UIContextProps>({} as UIContextProps);
 interface UIContextProps {
   setAlert: React.Dispatch<React.SetStateAction<AlertProps>>;
 }
-
 interface AlertProps {
   show: boolean;
   severity?: AlertColor;
@@ -24,7 +23,6 @@ export const UIContextProvider: React.FC = ({ children }) => {
     setAlert({
       show: false,
     });
-
   return (
     <UIContext.Provider value={{ setAlert }}>
       {children}
