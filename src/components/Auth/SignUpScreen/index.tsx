@@ -15,27 +15,42 @@ import { useAuth } from 'reactfire';
 import { Link } from 'react-router-dom';
 import { UIContext } from '../../Unknown/UIContext';
 import {
-  SignInSchema,
-  SignInValues,
-} from '../../../utils/schemas/SignInValidation';
+  SignUpValues,
+  SignUpSchema,
+  isValidUserName,
+} from '../../../utils/schemas/SignUpValidation';
 import SignLayout from '../SignLayout';
 
-const SignInScreen: React.FC = () => {
+const SignUpScreen: React.FC = () => {
   const { setAlert, setUserName } = useContext(UIContext);
   const auth = useAuth();
   const [isVisiblePassword, setIsVisiblePassword] = useState<boolean>(false);
+  const [isVisibleRepeatPassword, setIsVisibleRepeatPassword] =
+    useState<boolean>(false);
   const [disabled, setDisabled] = useState<boolean>(false);
   const loginForm = useFormik({
     initialValues: {
+      userName: '',
       email: '',
       password: '',
+      repeatPassword: '',
     },
-    validationSchema: SignInSchema,
-    onSubmit: async ({ email, password }: SignInValues) => {
+    validationSchema: SignUpSchema,
+    onSubmit: async ({ userName, email, password }: SignUpValues) => {
+      if (!isValidUserName(userName)) {
+        loginForm.errors.userName = 'Full name is required';
+        return;
+      }
       try {
         setDisabled(true);
-        const { user } = await auth.signInWithEmailAndPassword(email, password);
-        if (user) setUserName(user?.displayName);
+        await auth
+          .createUserWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            userCredential.user?.updateProfile({
+              displayName: userName,
+            });
+            setUserName(userName);
+          });
       } catch (error) {
         setAlert({
           show: true,
@@ -49,6 +64,9 @@ const SignInScreen: React.FC = () => {
   const handleClickShowPassword = () => {
     setIsVisiblePassword(!isVisiblePassword);
   };
+  const handleClickShowRepeatPassword = () => {
+    setIsVisibleRepeatPassword(!isVisibleRepeatPassword);
+  };
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
@@ -57,13 +75,7 @@ const SignInScreen: React.FC = () => {
   return (
     <>
       <SignLayout>
-        <Grid
-          item
-          xs={6}
-          sx={{
-            padding: '25px 0',
-          }}
-        >
+        <Grid item xs={6} sx={{ padding: '100px 0' }}>
           <Box
             sx={{
               display: 'flex',
@@ -87,11 +99,29 @@ const SignInScreen: React.FC = () => {
                 fill="#F50057"
               />
             </svg>
-            <Typography sx={{ fontWeight: 700 }} variant="h3" component="h3">
-              Login
+            <Typography
+              sx={{ fontWeight: 700, padding: '10px 0' }}
+              variant="h3"
+              component="h3"
+            >
+              Register
             </Typography>
             <Box sx={{ width: '375px' }}>
               <form onSubmit={loginForm.handleSubmit}>
+                <FormControl sx={{ width: '375px', marginBottom: '50px' }}>
+                  <InputLabel htmlFor="userName">Username</InputLabel>
+                  <FilledInput
+                    id="userName"
+                    name="userName"
+                    type="text"
+                    value={loginForm.values.userName}
+                    onChange={loginForm.handleChange}
+                    error={
+                      loginForm.touched.userName &&
+                      Boolean(loginForm.errors.userName)
+                    }
+                  />
+                </FormControl>
                 <FormControl sx={{ width: '375px', marginBottom: '50px' }}>
                   <InputLabel htmlFor="email">Email</InputLabel>
                   <FilledInput
@@ -136,7 +166,39 @@ const SignInScreen: React.FC = () => {
                     }
                   />
                 </FormControl>
-
+                <FormControl sx={{ width: '375px', marginBottom: '50px' }}>
+                  <InputLabel htmlFor="repeatPassword">
+                    Repeat password
+                  </InputLabel>
+                  <FilledInput
+                    id="repeatPassword"
+                    name="repeatPassword"
+                    fullWidth
+                    type={isVisibleRepeatPassword ? 'text' : 'password'}
+                    value={loginForm.values.repeatPassword}
+                    onChange={loginForm.handleChange}
+                    error={
+                      loginForm.touched.repeatPassword &&
+                      Boolean(loginForm.errors.repeatPassword)
+                    }
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowRepeatPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {isVisibleRepeatPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
                 <Button
                   disabled={disabled}
                   sx={{ backgroundColor: '#F50057 !important' }}
@@ -144,7 +206,7 @@ const SignInScreen: React.FC = () => {
                   variant="contained"
                   type="submit"
                 >
-                  LOGIN
+                  Register
                 </Button>
               </form>
             </Box>
@@ -156,14 +218,14 @@ const SignInScreen: React.FC = () => {
               }}
             >
               <Typography sx={{ fontWeight: 600 }}>
-                Don’t have an account?
+                Already have account?
               </Typography>
               <Button sx={{ color: '#F50057', fontWeight: 500 }}>
                 <Link
-                  to="/register"
+                  to="/login"
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                  REGISTER
+                  LOGIN
                 </Link>
               </Button>
             </Box>
@@ -174,4 +236,4 @@ const SignInScreen: React.FC = () => {
   );
 };
 
-export default SignInScreen;
+export default SignUpScreen;

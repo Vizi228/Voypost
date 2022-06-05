@@ -1,16 +1,17 @@
 import { Box, Typography, AppBar, Toolbar, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import Avatar from '@mui/material/Avatar';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useAuth, useUser } from 'reactfire';
+import { useAuth } from 'reactfire';
 import clearFirestoreCache from '../../../common/clearFirestoreCache';
+import { UIContext } from '../UIContext';
 
 const HomeScreen: React.FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { setAlert, userName } = useContext(UIContext);
   const auth = useAuth();
-  const { data } = useUser();
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
@@ -22,6 +23,17 @@ const HomeScreen: React.FC = () => {
     auth.signOut();
     clearFirestoreCache();
   };
+  useEffect(() => {
+    setAlert({
+      show: true,
+      severity: 'info',
+      message: 'Welcome on board 🚀',
+      anchorOrigin: {
+        vertical: 'bottom',
+        horizontal: 'center',
+      },
+    });
+  }, [setAlert]);
   return (
     <Box
       height="100vh"
@@ -46,8 +58,11 @@ const HomeScreen: React.FC = () => {
           </div>
           <div className="">
             <Avatar onClick={handleClick}>
-              {data.displayName
-                ? data.displayName.split(' ').map((item) => item[0])
+              {userName
+                ? userName
+                    .split(' ')
+                    .map((item) => item[0])
+                    .join('')
                 : 'U'}
             </Avatar>
             <div>
