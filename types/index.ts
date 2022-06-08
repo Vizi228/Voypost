@@ -1,7 +1,7 @@
 import type { Timestamp } from '@firebase/firestore-types';
 
 export type FirebaseId = {
-  id: string;
+  NO_ID_FIELD: string;
 };
 
 // collection `flats`
