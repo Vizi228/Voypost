@@ -10,8 +10,11 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Container from '@mui/material/Container';
 import ImageListItem from '@mui/material/ImageListItem';
+import Grid from '@mui/material/Grid';
 import { useAuth } from 'reactfire';
 import { Link } from 'react-router-dom';
+import LoginImg from '../../../assets/login.png';
+import LogoImg from '../../../assets/logo.svg';
 import { UIContext, useStyles } from '../../Unknown/UIContext';
 import {
   SignInSchema,
@@ -39,16 +42,17 @@ const SignInScreen: React.FC = () => {
     }
   };
 
-  const loginForm = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-    },
-    validationSchema: SignInSchema,
-    onSubmit: async ({ email, password }: SignInValues) => {
-      signIn({ email, password });
-    },
-  });
+  const { values, handleChange, touched, handleSubmit, errors, isSubmitting } =
+    useFormik({
+      initialValues: {
+        email: '',
+        password: '',
+      },
+      validationSchema: SignInSchema,
+      onSubmit: async ({ email, password }: SignInValues) => {
+        signIn({ email, password });
+      },
+    });
   const handleClickShowPassword = () => {
     setIsVisiblePassword(!isVisiblePassword);
   };
@@ -59,87 +63,85 @@ const SignInScreen: React.FC = () => {
   };
   return (
     <>
-      <Container
-        fixed
-        maxWidth="lg"
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          height: '100vh',
-        }}
-      >
-        <ImageListItem>
-          <img src="/login.png" alt="login" />
-        </ImageListItem>
-        <Box
-          className={classes.root}
-          sx={{
-            padding: '25px 0',
-          }}
-        >
-          <img src="logo.svg" alt="logo" />
-          <Typography variant="h3">Login</Typography>
-          <Box sx={{ width: 375 }}>
-            <form onSubmit={loginForm.handleSubmit}>
-              <TextField
-                id="email"
-                name="email"
-                label="Email"
-                variant="filled"
-                type="email"
-                className={classes.field}
-                fullWidth
-                value={loginForm.values.email}
-                onChange={loginForm.handleChange}
-                error={
-                  loginForm.touched.email && Boolean(loginForm.errors.email)
-                }
-              />
-              <TextField
-                label="Password"
-                id="password"
-                fullWidth
-                type={isVisiblePassword ? 'text' : 'password'}
-                name="password"
-                variant="filled"
-                className={classes.field}
-                value={loginForm.values.password}
-                onChange={loginForm.handleChange}
-                error={
-                  loginForm.touched.password &&
-                  Boolean(loginForm.errors.password)
-                }
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {isVisiblePassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Button
-                disabled={loginForm.isSubmitting}
-                color="secondary"
-                fullWidth
-                variant="contained"
-                type="submit"
-              >
-                Login
-              </Button>
-            </form>
-          </Box>
-          <Box className={classes.signBox}>
-            <Typography variant="text">Don’t have an account?</Typography>
-            <Link to="/register" className={classes.linkStyle}>
-              <Button color="secondary">Register</Button>
-            </Link>
-          </Box>
-        </Box>
+      <Container fixed maxWidth="lg" className={classes.signContainer}>
+        <Grid container>
+          <Grid item md={7}>
+            <ImageListItem className={classes.imageWidth}>
+              <img src={LoginImg} alt="login" />
+            </ImageListItem>
+          </Grid>
+          <Grid item md={5}>
+            <Box className={classes.root}>
+              <img src={LogoImg} alt="logo" />
+              <Typography variant="h3">Login</Typography>
+              <Grid container className={classes.justifyCenter}>
+                <Grid item md={9}>
+                  <form onSubmit={handleSubmit}>
+                    <TextField
+                      id="email"
+                      name="email"
+                      label="Email"
+                      variant="filled"
+                      type="email"
+                      className={classes.field}
+                      fullWidth
+                      value={values.email}
+                      onChange={handleChange}
+                      error={touched.email && Boolean(errors.email)}
+                    />
+                    <TextField
+                      label="Password"
+                      id="password"
+                      fullWidth
+                      type={isVisiblePassword ? 'text' : 'password'}
+                      name="password"
+                      variant="filled"
+                      className={classes.field}
+                      value={values.password}
+                      onChange={handleChange}
+                      error={touched.password && Boolean(errors.password)}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                            >
+                              {isVisiblePassword ? (
+                                <Visibility />
+                              ) : (
+                                <VisibilityOff />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    <Button
+                      disabled={isSubmitting}
+                      color="secondary"
+                      fullWidth
+                      variant="contained"
+                      type="submit"
+                    >
+                      Login
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+              <Box className={classes.signBox}>
+                <Typography variant="h6">Don’t have an account?</Typography>
+                <Link
+                  to="/register"
+                  color="secondary"
+                  className={classes.linkStyle}
+                >
+                  Register
+                </Link>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
       </Container>
     </>
   );

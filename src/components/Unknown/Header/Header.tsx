@@ -34,7 +34,8 @@ const Header: React.FC = () => {
   }, [data.displayName, userName]);
   const handleSignOut = async () => {
     try {
-      await auth.signOut().then(() => clearFirestoreCache());
+      await auth.signOut();
+      clearFirestoreCache();
     } catch (error) {
       setAlert({
         show: true,
@@ -50,12 +51,7 @@ const Header: React.FC = () => {
       <AppBar position="static" color="secondary">
         <Toolbar className={classes.space}>
           <Box className={classes.alignCenter}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            >
+            <IconButton edge="start" color="inherit" aria-label="menu">
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" color="inherit">

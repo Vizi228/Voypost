@@ -21,13 +21,21 @@ export const useStyles = makeStyles({
   root: {
     display: 'flex',
     height: '100%',
-    width: '45%',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
+    padding: '25px 0',
+  },
+  signContainer: {
+    display: 'flex',
+    height: '100vh',
+    overflow: 'hidden',
+  },
+  imageWidth: {
+    width: '102%',
   },
   field: {
-    marginBottom: 50,
+    marginBottom: '50px !important',
   },
   space: {
     display: 'flex',
@@ -53,10 +61,67 @@ export const useStyles = makeStyles({
   fullHeight: {
     height: '100%',
   },
+  fullWidth: {
+    width: '100%',
+  },
   linkStyle: {
     textDecoration: 'none',
-    color: 'inherit',
+    color: '#f50057',
     textAlign: 'center',
+  },
+  halfOpacity: {
+    opacity: 0.5,
+  },
+  descriptionLine: {
+    overflow: 'hidden',
+    maxHeight: '70px',
+  },
+  responsiveFlatImg: {
+    width: '50%',
+    height: 'auto',
+  },
+  containedSecondary: {
+    backgroundColor: '#f50057',
+    color: '#fff',
+    padding: 5,
+    borderRadius: 4,
+  },
+  flatCardPaper: {
+    marginTop: '100px',
+    width: '100%',
+    display: 'flex',
+    flexWrap: 'wrap',
+    borderRadius: '10px',
+  },
+  flatBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    flexGrow: 0,
+    maxHeight: 400,
+    backgroundColor: '#fff',
+    zIndex: 100,
+  },
+  flatCardBox: {
+    width: '50%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignItems: 'flex-start',
+    padding: 20,
+  },
+  flatItemsBox: {
+    maxHeight: '79vh',
+    overflow: 'auto',
+    scrollbarWidth: 'none',
+  },
+  mapFlatBox: {
+    height: '93.4vh',
+    backgroundColor: '#BDBDBD',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#fff',
   },
 });
 

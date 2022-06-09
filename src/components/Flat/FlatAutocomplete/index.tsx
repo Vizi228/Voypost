@@ -6,21 +6,17 @@ import TextField from '@mui/material/TextField';
 import ListItemText from '@mui/material/ListItemText';
 import usePlacesAutocomplete from 'use-places-autocomplete';
 import useOnclickOutside from 'react-cool-onclickoutside';
-import { useJsApiLoader } from '@react-google-maps/api';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import { useHistory } from 'react-router-dom';
+import { useStyles } from '../../Unknown/UIContext';
 
 type FlatAutocompleteProps = {
   setCityName: React.Dispatch<React.SetStateAction<string>>;
 };
 const FlatAutocomplete: FC<FlatAutocompleteProps> = ({ setCityName }) => {
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: 'AIzaSyBUZV-O6ZNEQkXsKgB7sNWFBlJf6bZeyqE',
-    libraries: ['places', 'geometry'],
-  });
+  const classes = useStyles();
   const history = useHistory();
   const {
     ready,
@@ -46,12 +42,17 @@ const FlatAutocomplete: FC<FlatAutocompleteProps> = ({ setCityName }) => {
   const handleSelect = (elem: any) => () => {
     setValue(elem.description, false);
     setCityName(elem.terms[0].value);
-    history.push(`?city=${elem.terms[0].value}`);
+    history.push(`?city${elem.terms[0].value}`);
     clearSuggestions();
   };
   const handleSearch = (city: string) => {
-    const currentCity = city.split(' ')[0];
-    setValue(currentCity, false);
+    const currentCity = city
+      .trim()
+      .split(' ')[0]
+      .split('')
+      .filter((item) => /^[a-zA-Zа-яА-ЯёЁ]+$/.test(item))
+      .join('');
+    setValue(city, false);
     setCityName(currentCity);
     history.push(`?city=${currentCity}`);
     clearSuggestions();
@@ -60,21 +61,7 @@ const FlatAutocomplete: FC<FlatAutocompleteProps> = ({ setCityName }) => {
     init();
   });
   return (
-    <Box
-      ref={ref}
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        flexBasis: '41.6%',
-        width: '32.5%',
-        flexGrow: 0,
-        maxHeight: 400,
-        bgcolor: 'background.paper',
-        zIndex: 100,
-        marginTop: '25px',
-      }}
-      position="fixed"
-    >
+    <Box ref={ref} className={classes.flatBox} position="relative">
       <TextField
         fullWidth
         label="City"
@@ -94,12 +81,12 @@ const FlatAutocomplete: FC<FlatAutocompleteProps> = ({ setCityName }) => {
           ),
         }}
       />
-      <Box>
+      <Box className={classes.flatBox} mt={7} position="absolute">
         {status === 'OK' &&
           value &&
           data.map((item) => (
             <ListItem
-              sx={{ width: '100%' }}
+              className={classes.fullWidth}
               key={item.place_id}
               component="div"
               disablePadding
