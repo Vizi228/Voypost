@@ -13,13 +13,14 @@ import ImageListItem from '@mui/material/ImageListItem';
 import Grid from '@mui/material/Grid';
 import { useAuth } from 'reactfire';
 import { Link } from 'react-router-dom';
-import LoginImg from '../../../assets/login.png';
-import LogoImg from '../../../assets/logo.svg';
+import LoginImg from '../assets/login.png';
+import { ReactComponent as LogoImg } from '../assets/logo.svg';
 import { UIContext, useStyles } from '../../Unknown/UIContext';
 import {
   SignUpValues,
   SignUpSchema,
 } from '../../../utils/schemas/SignUpValidation';
+import SignPasswordComponent from '../SignPasswordComponent';
 
 const SignUpScreen: React.FC = () => {
   const { setAlert, setUserName } = useContext(UIContext);
@@ -39,14 +40,23 @@ const SignUpScreen: React.FC = () => {
       validationSchema: SignUpSchema,
       onSubmit: async ({ userName, email, password }: SignUpValues) => {
         try {
-          await auth
-            .createUserWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-              userCredential.user?.updateProfile({
-                displayName: userName,
-              });
-              setUserName(userName);
-            });
+          const userCredentials = await auth.createUserWithEmailAndPassword(
+            email,
+            password,
+          );
+          await userCredentials.user?.updateProfile({
+            displayName: userName,
+          });
+          setUserName(userName);
+          setAlert({
+            show: true,
+            severity: 'info',
+            message: 'Welcome on board 🚀',
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'center',
+            },
+          });
         } catch (error) {
           setAlert({
             show: true,
@@ -80,105 +90,72 @@ const SignUpScreen: React.FC = () => {
           </Grid>
           <Grid item md={5}>
             <Box className={classes.root}>
-              <img src={LogoImg} alt="logo" />
+              <LogoImg />
               <Typography variant="h3" component="h2">
                 Register
               </Typography>
-              <Box className={classes.fieldWidth}>
-                <form onSubmit={handleSubmit}>
-                  <TextField
-                    fullWidth
-                    label="Username"
-                    id="userName"
-                    variant="filled"
-                    name="userName"
-                    className={classes.field}
-                    type="text"
-                    value={values.userName}
-                    onChange={handleChange}
-                    error={touched.userName && Boolean(errors.userName)}
-                  />
-                  <TextField
-                    id="email"
-                    name="email"
-                    variant="filled"
-                    type="email"
-                    fullWidth
-                    className={classes.field}
-                    label="Email"
-                    value={values.email}
-                    onChange={handleChange}
-                    error={touched.email && Boolean(errors.email)}
-                  />
-                  <TextField
-                    label="Password"
-                    id="password"
-                    fullWidth
-                    type={isVisiblePassword ? 'text' : 'password'}
-                    name="password"
-                    variant="filled"
-                    className={classes.field}
-                    value={values.password}
-                    onChange={handleChange}
-                    error={touched.password && Boolean(errors.password)}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                          >
-                            {isVisiblePassword ? (
-                              <Visibility />
-                            ) : (
-                              <VisibilityOff />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <TextField
-                    label="Repeat Password"
-                    id="repeatPassword"
-                    fullWidth
-                    type={isVisibleRepeatPassword ? 'text' : 'password'}
-                    name="repeatPassword"
-                    variant="filled"
-                    className={classes.field}
-                    value={values.repeatPassword}
-                    onChange={handleChange}
-                    error={
-                      touched.repeatPassword && Boolean(errors.repeatPassword)
-                    }
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={handleClickShowRepeatPassword}
-                            onMouseDown={handleMouseDownPassword}
-                          >
-                            {isVisibleRepeatPassword ? (
-                              <Visibility />
-                            ) : (
-                              <VisibilityOff />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <Button
-                    disabled={isSubmitting}
-                    color="secondary"
-                    fullWidth
-                    variant="contained"
-                    type="submit"
-                  >
-                    Register
-                  </Button>
-                </form>
-              </Box>
+              <Grid container className={classes.justifyCenter}>
+                <Grid item md={9}>
+                  <form onSubmit={handleSubmit}>
+                    <Box mb={5}>
+                      <TextField
+                        fullWidth
+                        label="Username"
+                        id="userName"
+                        variant="filled"
+                        name="userName"
+                        type="text"
+                        value={values.userName}
+                        onChange={handleChange}
+                        error={touched.userName && Boolean(errors.userName)}
+                      />
+                    </Box>
+
+                    <Box mb={5}>
+                      <TextField
+                        id="email"
+                        name="email"
+                        label="Email"
+                        variant="filled"
+                        type="email"
+                        fullWidth
+                        value={values.email}
+                        onChange={handleChange}
+                        error={touched.email && Boolean(errors.email)}
+                      />
+                    </Box>
+                    <Box mb={5}>
+                      <SignPasswordComponent
+                        value={values.password}
+                        touched={touched.password}
+                        label="Password"
+                        name="password"
+                        errors={errors.password}
+                        handleChange={handleChange}
+                      />
+                    </Box>
+                    <Box mb={5}>
+                      <SignPasswordComponent
+                        value={values.repeatPassword}
+                        touched={touched.repeatPassword}
+                        label="Repeat Password"
+                        name="repeatPassword"
+                        errors={errors.repeatPassword}
+                        handleChange={handleChange}
+                      />
+                    </Box>
+                    <Button
+                      disabled={isSubmitting}
+                      color="secondary"
+                      fullWidth
+                      variant="contained"
+                      type="submit"
+                    >
+                      Register
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
               <Box className={classes.signBox}>
                 <Typography variant="h6">Already have account?</Typography>
                 <Link to="/login" className={classes.linkStyle}>

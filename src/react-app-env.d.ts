@@ -1,5 +1,4 @@
 /// <reference types="react-scripts" />
-REACT_APP_API_KEY = 'AIzaSyBUZV-O6ZNEQkXsKgB7sNWFBlJf6bZeyqE';
 declare namespace NodeJS {
   interface ProcessEnv {
     // types of envs

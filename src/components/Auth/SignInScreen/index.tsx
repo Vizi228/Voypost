@@ -13,13 +13,14 @@ import ImageListItem from '@mui/material/ImageListItem';
 import Grid from '@mui/material/Grid';
 import { useAuth } from 'reactfire';
 import { Link } from 'react-router-dom';
-import LoginImg from '../../../assets/login.png';
-import LogoImg from '../../../assets/logo.svg';
+import LoginImg from '../assets/login.png';
+import { ReactComponent as LogoImg } from '../assets/logo.svg';
 import { UIContext, useStyles } from '../../Unknown/UIContext';
 import {
   SignInSchema,
   SignInValues,
 } from '../../../utils/schemas/SignInValidation';
+import SignPasswordComponent from '../SignPasswordComponent';
 
 const SignInScreen: React.FC = () => {
   const { setAlert, setUserName } = useContext(UIContext);
@@ -31,6 +32,15 @@ const SignInScreen: React.FC = () => {
     try {
       const { user } = await auth.signInWithEmailAndPassword(email, password);
       if (user) setUserName(user?.displayName);
+      setAlert({
+        show: true,
+        severity: 'info',
+        message: 'Welcome on board 🚀',
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'center',
+        },
+      });
     } catch (error) {
       setAlert({
         show: true,
@@ -56,11 +66,6 @@ const SignInScreen: React.FC = () => {
   const handleClickShowPassword = () => {
     setIsVisiblePassword(!isVisiblePassword);
   };
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    event.preventDefault();
-  };
   return (
     <>
       <Container fixed maxWidth="lg" className={classes.signContainer}>
@@ -72,51 +77,35 @@ const SignInScreen: React.FC = () => {
           </Grid>
           <Grid item md={5}>
             <Box className={classes.root}>
-              <img src={LogoImg} alt="logo" />
+              <LogoImg />
               <Typography variant="h3">Login</Typography>
               <Grid container className={classes.justifyCenter}>
                 <Grid item md={9}>
                   <form onSubmit={handleSubmit}>
-                    <TextField
-                      id="email"
-                      name="email"
-                      label="Email"
-                      variant="filled"
-                      type="email"
-                      className={classes.field}
-                      fullWidth
-                      value={values.email}
-                      onChange={handleChange}
-                      error={touched.email && Boolean(errors.email)}
-                    />
-                    <TextField
-                      label="Password"
-                      id="password"
-                      fullWidth
-                      type={isVisiblePassword ? 'text' : 'password'}
-                      name="password"
-                      variant="filled"
-                      className={classes.field}
-                      value={values.password}
-                      onChange={handleChange}
-                      error={touched.password && Boolean(errors.password)}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={handleClickShowPassword}
-                              onMouseDown={handleMouseDownPassword}
-                            >
-                              {isVisiblePassword ? (
-                                <Visibility />
-                              ) : (
-                                <VisibilityOff />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
+                    <Box mb={5}>
+                      <TextField
+                        id="email"
+                        name="email"
+                        label="Email"
+                        variant="filled"
+                        type="email"
+                        fullWidth
+                        value={values.email}
+                        onChange={handleChange}
+                        error={touched.email && Boolean(errors.email)}
+                      />
+                    </Box>
+
+                    <Box mb={5}>
+                      <SignPasswordComponent
+                        value={values.password}
+                        touched={touched.password}
+                        label="Password"
+                        name="password"
+                        errors={errors.password}
+                        handleChange={handleChange}
+                      />
+                    </Box>
                     <Button
                       disabled={isSubmitting}
                       color="secondary"

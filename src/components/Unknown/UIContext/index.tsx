@@ -24,7 +24,8 @@ export const useStyles = makeStyles({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '25px 0',
+    paddingTop: 25,
+    paddingBottom: 25,
   },
   signContainer: {
     display: 'flex',
@@ -33,9 +34,6 @@ export const useStyles = makeStyles({
   },
   imageWidth: {
     width: '102%',
-  },
-  field: {
-    marginBottom: '50px !important',
   },
   space: {
     display: 'flex',
@@ -55,9 +53,6 @@ export const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'center',
   },
-  fieldWidth: {
-    width: '70%',
-  },
   fullHeight: {
     height: '100%',
   },
@@ -74,11 +69,12 @@ export const useStyles = makeStyles({
   },
   descriptionLine: {
     overflow: 'hidden',
-    maxHeight: '70px',
+    maxHeight: 70,
   },
   responsiveFlatImg: {
     width: '50%',
     height: 'auto',
+    borderRadius: 10,
   },
   containedSecondary: {
     backgroundColor: '#f50057',
@@ -87,11 +83,11 @@ export const useStyles = makeStyles({
     borderRadius: 4,
   },
   flatCardPaper: {
-    marginTop: '100px',
+    marginTop: 100,
     width: '100%',
     display: 'flex',
     flexWrap: 'wrap',
-    borderRadius: '10px',
+    borderRadius: 10,
   },
   flatBox: {
     display: 'flex',

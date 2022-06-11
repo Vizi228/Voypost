@@ -8,6 +8,7 @@ import usePlacesAutocomplete from 'use-places-autocomplete';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
+import * as qs from 'qs';
 import SearchIcon from '@mui/icons-material/Search';
 import { useHistory } from 'react-router-dom';
 import { useStyles } from '../../Unknown/UIContext';
@@ -42,16 +43,11 @@ const FlatAutocomplete: FC<FlatAutocompleteProps> = ({ setCityName }) => {
   const handleSelect = (elem: any) => () => {
     setValue(elem.description, false);
     setCityName(elem.terms[0].value);
-    history.push(`?city${elem.terms[0].value}`);
+    history.push(`?city=${elem.terms[0].value}`);
     clearSuggestions();
   };
   const handleSearch = (city: string) => {
-    const currentCity = city
-      .trim()
-      .split(' ')[0]
-      .split('')
-      .filter((item) => /^[a-zA-Zа-яА-ЯёЁ]+$/.test(item))
-      .join('');
+    const [currentCity] = city.trim().split(' ');
     setValue(city, false);
     setCityName(currentCity);
     history.push(`?city=${currentCity}`);
@@ -60,6 +56,13 @@ const FlatAutocomplete: FC<FlatAutocompleteProps> = ({ setCityName }) => {
   useEffect(() => {
     init();
   });
+  useEffect(() => {
+    if (window.location.search) {
+      const searchParams = qs.parse(window.location.search.substring(1));
+      setValue(searchParams?.city);
+      clearSuggestions();
+    }
+  }, [setValue, clearSuggestions]);
   return (
     <Box ref={ref} className={classes.flatBox} position="relative">
       <TextField

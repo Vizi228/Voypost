@@ -4,8 +4,10 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { useJsApiLoader } from '@react-google-maps/api';
 import { useHistory, useParams } from 'react-router-dom';
+import { Typography } from '@mui/material';
+import * as qs from 'qs';
 import { Flat } from '../../../../types';
-import Header from '../../Unknown/Header/Header';
+import Header from '../../Unknown/Header/index';
 import FlatAutocomplete from '../FlatAutocomplete';
 import FlatCard from '../FlatCard';
 import FlatMap from '../FlatMap';
@@ -22,7 +24,6 @@ const FlatsScreen: FC = () => {
   const classes = useStyles();
   const firestore = useFirestore();
   const [cityName, setCityName] = useState<string>('');
-  const history = useHistory();
   const filteredFlats = () => {
     if (cityName)
       return firestore
@@ -36,8 +37,11 @@ const FlatsScreen: FC = () => {
   });
   const params = useParams<{ id: string }>();
   useEffect(() => {
-    history.push('/flats');
-  }, [history]);
+    if (window.location.search) {
+      const searchParams = qs.parse(window.location.search.substring(1));
+      setCityName(searchParams?.city);
+    }
+  }, []);
   return (
     <>
       <Header />
@@ -45,7 +49,7 @@ const FlatsScreen: FC = () => {
         <Grid item xs={5} p={5} position="relative">
           <FlatAutocomplete setCityName={setCityName} />
           <Box className={classes.flatItemsBox}>
-            {data &&
+            {data?.length > 0 ? (
               data.map(
                 ({ photoUrl, description, address, dailyPriceUsd, id }) => (
                   <FlatCard
@@ -58,7 +62,12 @@ const FlatsScreen: FC = () => {
                     cityName={cityName}
                   />
                 ),
-              )}
+              )
+            ) : (
+              <Typography mt={30} variant="h3">
+                Квартир не найдено
+              </Typography>
+            )}
           </Box>
         </Grid>
         <Grid item xs={7}>

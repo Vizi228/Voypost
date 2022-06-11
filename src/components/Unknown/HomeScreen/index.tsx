@@ -2,22 +2,11 @@ import { Box } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { UIContext, useStyles } from '../UIContext';
-import Header from '../Header/Header';
+import Header from '../Header/index';
 
 const HomeScreen: React.FC = () => {
   const { setAlert } = useContext(UIContext);
   const classes = useStyles();
-  useEffect(() => {
-    setAlert({
-      show: true,
-      severity: 'info',
-      message: 'Welcome on board 🚀',
-      anchorOrigin: {
-        vertical: 'bottom',
-        horizontal: 'center',
-      },
-    });
-  }, [setAlert]);
   return (
     <>
       <Header />

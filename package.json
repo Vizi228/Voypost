@@ -16,7 +16,7 @@
     "firebase": "^8.2.6",
     "formik": "^2.2.6",
     "interactjs": "^1.10.11",
-    "qs": "^6.10.1",
+    "qs": "^6.10.5",
     "react": "^17.0.1",
     "react-cool-onclickoutside": "^1.7.0",
     "react-dom": "^17.0.1",
